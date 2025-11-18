@@ -1,0 +1,34 @@
+version: 2
+updates:
+  # Keep Black & Ruff pins in requirements-dev.txt up to date
+  - package-ecosystem: "pip"
+    directory: "/"                  # where requirements-dev.txt lives
+    schedule:
+      interval: "weekly"            # or "daily" / "monthly"
+      day: "monday"                 # optional
+      time: "09:00"                 # optional, UTC
+    allow:
+      - dependency-type: "direct"   # only bump what you pin directly
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "deps(pip)"
+    labels:
+      - "dependencies"
+      - "python"
+    groups:                         # (optional) reduce PR noise
+      dev-tools:
+        patterns:
+          - "black"
+          - "ruff"
+
+  # Optional: keep GitHub Actions pinned versions fresh too
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 3
+    commit-message:
+      prefix: "deps(actions)"
+    labels:
+      - "dependencies"
+      - "ci"

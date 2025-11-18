@@ -1,0 +1,68 @@
+# --- Virtual envs ---
+.venv/
+.venv_*/
+venv/
+env/
+ENV/
+
+# --- Python bytecode / caches ---
+__pycache__/
+#.py[cod]
+#$py.class
+
+# --- OS junk ---
+.DS_Store
+Thumbs.db
+
+# --- Logs / temp ---
+logs/
+*.log
+*.tmp
+
+# --- Packaging / builds ---
+.build/
+build/
+dist/
+downloads/
+eggs/
+.eggs/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# --- PyInstaller ---
+*.spec
+
+# --- Test / coverage / tools ---
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache/
+.pytest_cache/
+hypothesis/
+.hypothesis/
+.coverage.*
+htmlcov/
+.coverage.*
+
+# --- Type checkers / linters ---
+.mypy_cache/
+.pyre/
+.pytype/
+.ruff_cache/
+
+# --- Jupyter ---
+.ipynb_checkpoints/
+
+# --- Environment / secrets ---
+.env
+.evn.*
+*.evn
+
+# --- IDEs (keep .vscode tracked for this template) ---
+.idea/
+.vscode/*.code-workspace

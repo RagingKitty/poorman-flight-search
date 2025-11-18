@@ -1,0 +1,25 @@
+{
+  "python.defaultInterpreterPath": "python",
+  "python.analysis.typeCheckingMode": "basic",
+  "python.analysis.diagnosticMode": "workspace",
+
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "explicit",
+    "source.organizeImports": "explicit",
+    "source.fixAll.ruff": "explicit",
+    "source.organizeImports.ruff": "explicit"
+  },
+
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter",
+    "editor.formatOnSave": true
+  },
+
+  "ruff.nativeServer": "on",
+  "ruff.enable": true,
+  "ruff.organizeImports": true,
+
+  "[toml]": { "editor.defaultFormatter": "tamasfe.even-better-toml", "editor.formatOnSave": true },
+  "files.associations": { "pyproject.toml": "toml" }
+}
