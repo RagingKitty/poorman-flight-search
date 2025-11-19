@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-DATA_DIR = Path(__file__).resolve().parent.parent / "data"
+DATA_DIR = Path(__file__).resolve().parents[2] / "data"
 
 
 def load_raw_data(filename: str) -> list[dict[str, Any]] | None:
