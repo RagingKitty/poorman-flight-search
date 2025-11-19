@@ -59,6 +59,7 @@ class AmadeusAPI:
         departure_date: str,
         return_date: str,
         currency: str,
+        max_price: int,
         adults: int = 1,
     ) -> list[dict[str, Any]] | None:
         return self._execute_api_call(
@@ -69,6 +70,7 @@ class AmadeusAPI:
             departureDate=departure_date,
             returnDate=return_date,
             currencyCode=currency,
+            maxPrice=max_price,
             adults=adults,
         )
 

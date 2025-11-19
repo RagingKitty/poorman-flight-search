@@ -9,7 +9,15 @@ from dotenv import load_dotenv
 from amadeus_api import AmadeusAPI
 from exceptions.amadeus_exception_handler import AmadeusAPIError
 from json_handler import save_to_json
-from settings import ADULTS, CURRENCY, DESTINATION, END_DATE, ORIGIN, START_DATE
+from settings import (
+    ADULTS,
+    CURRENCY,
+    DESTINATION,
+    END_DATE,
+    MAX_PRICE,
+    ORIGIN,
+    START_DATE,
+)
 
 env_path = Path(__file__).resolve().parent.parent / ".env"
 load_dotenv(dotenv_path=env_path)
@@ -43,9 +51,10 @@ def run_flight_offer() -> Path | None:
             "departure_date": START_DATE,
             "return_date": END_DATE,
             "currency": CURRENCY,
+            "max_price": MAX_PRICE,
             "adults": ADULTS,
         },
-        DATA_DIR / "raw_flight_offer4.json",
+        DATA_DIR / "raw_flight_offer5.json",
     )
 
 

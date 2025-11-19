@@ -21,34 +21,12 @@ def load_raw_data(filename: str) -> list[dict[str, Any]] | None:
         return json.load(file)
 
 
-# def test_minimal_extraction(filename: str):
-#     raw_offers = load_raw_data(filename)
-
-#     if not raw_offers:
-#         return
-
-#     offers_to_process = raw_offers[:5]
-
-#     print("--- Extraction Test ---")
-#     print(f"Target File: {filename}")
-
-#     for index, offer in enumerate(offers_to_process):
-#         offer_id = offer.get("id")
-#         price_data = offer.get("price", {})
-#         grand_total = price_data.get("grandTotal")
-#         currency = price_data.get("currency", "")
-
-#         print(f"Offer #{index + 1} (ID: {offer_id}) -> Price: {grand_total} {currency}")
-
-#     print("-------------------------------")
-
-
 def test_complex_extraction(filename: str):
     raw_offers = load_raw_data(filename)
     if not raw_offers:
         return
 
-    offers_to_process = raw_offers[:5]
+    offers_to_process = raw_offers
 
     print("--- Complex Extraction Test ---")
     print(f"Target File: {filename}")
@@ -86,13 +64,13 @@ def test_complex_extraction(filename: str):
 
         print("\n  > BAG ALLOWANCE DETAILS:")
 
-        for travel_index, travel in enumerate(offer.get("travelerPricings", [])):
+        for _, travel in enumerate(offer.get("travelerPricings", [])):
 
-            for segment_detail_index, segment_detail in enumerate(
+            for fare_detail_segment_index, fare_detail_segment in enumerate(
                 travel.get("fareDetailsBySegment", [])
             ):
-                checked_bags = segment_detail.get("includedCheckedBags", {})
-                cabin_bags = segment_detail.get("includedCabinBags", {})
+                checked_bags = fare_detail_segment.get("includedCheckedBags", {})
+                cabin_bags = fare_detail_segment.get("includedCabinBags", {})
 
                 checked_weight = checked_bags.get("weight", 0)
                 checked_unit = checked_bags.get("weightUnit", "KG")
@@ -101,15 +79,14 @@ def test_complex_extraction(filename: str):
                 cabin_unit = cabin_bags.get("weightUnit", "KG")
 
                 print(
-                    f"      Segment {segment_detail_index + 1}: Checked Bags: {checked_weight} {checked_unit} | Cabin Bags: {cabin_weight} {cabin_unit}"
+                    f"      Segment {fare_detail_segment_index + 1}: Checked Bags: {checked_weight} {checked_unit} | Cabin Bags: {cabin_weight} {cabin_unit}"
                 )
 
     print("\n--- Extraction Test Complete ---")
 
 
 def main() -> None:
-    TEST_FILE = "raw_flight_offer4.json"
-    # test_minimal_extraction(TEST_FILE)
+    TEST_FILE = "raw_flight_offer5.json"
     test_complex_extraction(TEST_FILE)
 
 
