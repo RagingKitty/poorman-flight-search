@@ -19,6 +19,8 @@ from src.config.settings import (
 from src.exceptions.amadeus_exception_handler import AmadeusAPIError
 from src.utils.json_handler import save_to_json
 
+from .__version__ import __version__
+
 env_path = Path(__file__).resolve().parent.parent / ".env"
 load_dotenv(dotenv_path=env_path)
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
@@ -68,6 +70,7 @@ def run_flight_search() -> Path | None:
 
 
 def main():
+    print(f"--- Starting Poor Man's Flight Searcher (v{__version__}) ---")
     run_flight_offer()
 
 
