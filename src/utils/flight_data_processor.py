@@ -1,7 +1,3 @@
-# Testing phase:
-# 1. drop json into this script.
-# 2. clean-up json and get the price for args[0]
-
 from __future__ import annotations
 
 import json

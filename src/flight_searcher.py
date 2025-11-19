@@ -6,10 +6,8 @@ from typing import Any
 
 from dotenv import load_dotenv
 
-from amadeus_api import AmadeusAPI
-from exceptions.amadeus_exception_handler import AmadeusAPIError
-from json_handler import save_to_json
-from settings import (
+from src.api.amadeus_api import AmadeusAPI
+from src.config.settings import (
     ADULTS,
     CURRENCY,
     DESTINATION,
@@ -18,6 +16,8 @@ from settings import (
     ORIGIN,
     START_DATE,
 )
+from src.exceptions.amadeus_exception_handler import AmadeusAPIError
+from src.utils.json_handler import save_to_json
 
 env_path = Path(__file__).resolve().parent.parent / ".env"
 load_dotenv(dotenv_path=env_path)
