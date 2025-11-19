@@ -62,7 +62,12 @@ htmlcov/
 .env
 .evn.*
 *.evn
+*.local
 
 # --- IDEs (keep .vscode tracked for this template) ---
 .idea/
 .vscode/*.code-workspace
+.vscode-test/
+
+# --- Project Data and Outputs ---
+data/
