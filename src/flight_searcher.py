@@ -17,7 +17,8 @@ from src.config.settings import (
     START_DATE,
 )
 from src.exceptions.amadeus_exception_handler import AmadeusAPIError
-from src.utils.json_handler import save_to_json
+from src.models.amadeus_api_models import FlightDateParam, FlightOffersParam
+from src.utils.json_handler import save_offers_to_json
 
 from .__version__ import __version__
 
@@ -28,11 +29,11 @@ DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 
 def _search_and_save(
     method: Callable[..., Sequence[dict[str, Any]] | None],
-    params: dict[str, Any],
+    params: object,
     outfile: Path,
 ) -> Path | None:
     try:
-        data = method(**params)
+        data = method(params=params)
     except AmadeusAPIError as exc:
         print(f"\nAPI Search Failed for {method.__name__}: {exc}")
         return None
@@ -41,30 +42,27 @@ def _search_and_save(
         print(f"No data returend for {method.__name__}")
         return None
 
-    return save_to_json(data, outfile)
+    return save_offers_to_json(data, outfile)
 
 
 def run_flight_offer() -> Path | None:
+    flight_offer_params = FlightOffersParam(
+        ORIGIN, DESTINATION, START_DATE, END_DATE, CURRENCY, MAX_PRICE, ADULTS
+    )
+
     return _search_and_save(
         AmadeusAPI().search_flight_offers,
-        {
-            "origin": ORIGIN,
-            "destination": DESTINATION,
-            "departure_date": START_DATE,
-            "return_date": END_DATE,
-            "currency": CURRENCY,
-            "max_price": MAX_PRICE,
-            "adults": ADULTS,
-        },
-        DATA_DIR / "raw_flight_offer5.json",
+        flight_offer_params,
+        DATA_DIR / "raw_flight_offer7.json",
     )
 
 
 # Problematic API
 def run_flight_search() -> Path | None:
+    flight_data_params = FlightDateParam(ORIGIN, DESTINATION)
     return _search_and_save(
         AmadeusAPI().search_flight_date,
-        {"origin": ORIGIN, "destination": DESTINATION},
+        flight_data_params,
         DATA_DIR / "raw_flight_date1.json",
     )
 

@@ -1,7 +1,7 @@
-from src.flight_models import FlightOffer
+from src.models.flight_models import FlightOffer
 
 
-def print_offers(offers: list[FlightOffer]) -> None:
+def print_flight_offers(offers: list[FlightOffer]) -> None:
     print("-------- DATA EXTRACTION --------")
     print(f"No. of Entry: {len(offers)}")
 

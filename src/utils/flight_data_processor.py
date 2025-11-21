@@ -1,28 +1,17 @@
 from __future__ import annotations
 
-import json
+import logging
 from pathlib import Path
-from typing import Any
 
-from src.flight_models import BagAllowance, FlightOffer, Itinerary, Segment
-from src.utils.flight_data_printer import print_offers
+from src.models.flight_models import BagAllowance, FlightOffer, Itinerary, Segment
+from src.utils.flight_data_printer import print_flight_offers
+from src.utils.json_handler import load_raw_json_flight_offers
 
 DATA_DIR = Path(__file__).resolve().parents[2] / "data"
 
 
-def load_raw_data(filename: str) -> list[dict[str, Any]]:
-    file_path = DATA_DIR / filename
-    if not file_path.exists():
-        print(f"Error: File not found at {file_path}")
-        return []
-
-    with file_path.open("r", encoding="utf-8") as file:
-        data = json.load(file)
-        return data if isinstance(data, list) else []
-
-
-def data_extraction(filepath: str) -> list[FlightOffer] | None:
-    raw_data = load_raw_data(filepath)
+def extract_flight_offers(filepath: Path) -> list[FlightOffer] | None:
+    raw_data = load_raw_json_flight_offers(filepath)
     if not raw_data:
         return
 
@@ -73,11 +62,18 @@ def data_extraction(filepath: str) -> list[FlightOffer] | None:
 
 
 def main() -> None:
-    TEST_FILE = "raw_flight_offer5.json"
-    data_model = data_extraction(TEST_FILE)
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
+    )
+
+    TEST_FILE_NAME = "raw_flight_offer7.json"
+    test_file_path = DATA_DIR / TEST_FILE_NAME
+
+    data_model = extract_flight_offers(test_file_path)
     if not data_model:
         return
-    print_offers(data_model)
+    print_flight_offers(data_model)
 
 
 if __name__ == "__main__":

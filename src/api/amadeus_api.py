@@ -1,12 +1,18 @@
 from __future__ import annotations
 
+import logging
 import os
 from collections.abc import Callable
+from dataclasses import asdict
 from typing import Any
 
 from amadeus import Client, ResponseError
 
 from src.exceptions.amadeus_exception_handler import AmadeusAPIError
+from src.models.amadeus_api_models import FlightDateParam, FlightOffersParam
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 
 class AmadeusAPI:
@@ -32,17 +38,26 @@ class AmadeusAPI:
         try:
             response = api_method(**kwargs)
 
-            print(f"{context_message}: Successful")
+            logger.info("%s: Successful", context_message)
             return response.data
 
         except ResponseError as exc:
             response = exc.response
             status = response.status_code
             errors = response.result.get("errors", [])
+
             detail = (
                 errors[0].get("detail", "No additional detail")
                 if errors
                 else "Unknown error"
+            )
+
+            logger.error(
+                "API call failure: %s (Status: %d, Detail: %s)",
+                context_message,
+                status,
+                detail,
+                exc_info=True,
             )
 
             raise AmadeusAPIError(
@@ -54,35 +69,23 @@ class AmadeusAPI:
     def search_flight_offers(
         self,
         *,
-        origin: str,
-        destination: str,
-        departure_date: str,
-        return_date: str,
-        currency: str,
-        max_price: int,
-        adults: int = 1,
+        params: FlightOffersParam,
     ) -> list[dict[str, Any]] | None:
+        api_params = asdict(params)
+
         return self._execute_api_call(
             api_method=self.amadeus.shopping.flight_offers_search.get,
             context_message="search_flight_offers",
-            originLocationCode=origin,
-            destinationLocationCode=destination,
-            departureDate=departure_date,
-            returnDate=return_date,
-            currencyCode=currency,
-            maxPrice=max_price,
-            adults=adults,
+            **api_params,
         )
 
     def search_flight_date(
-        self,
-        *,
-        origin: str,
-        destination: str,
+        self, *, params: FlightDateParam
     ) -> list[dict[str, Any]] | None:
+        api_params = asdict(params)
+
         return self._execute_api_call(
             api_method=self.amadeus.shopping.flight_dates.get,
             context_message="search_flight_dates",
-            origin=origin,
-            destination=destination,
+            **api_params,
         )
