@@ -1,7 +1,13 @@
+import logging
+
 from src.models.flight_models import FlightOffer
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 
 def print_flight_offers(offers: list[FlightOffer]) -> None:
+    logger.info("Printing Data\n")
     print("-------- DATA EXTRACTION --------")
     print(f"No. of Entry: {len(offers)}")
 

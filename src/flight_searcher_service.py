@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 from collections.abc import Callable, Sequence
 from pathlib import Path
 from typing import Any
@@ -17,32 +18,48 @@ from src.config.settings import (
     START_DATE,
 )
 from src.exceptions.amadeus_exception_handler import AmadeusAPIError
-from src.models.amadeus_api_models import FlightDateParam, FlightOffersParam
+from src.models.amadeus_api_models import FlightOffersParam
 from src.utils.json_handler import save_offers_to_json
 
-from .__version__ import __version__
-
-env_path = Path(__file__).resolve().parent.parent / ".env"
+BASE_DIR = Path(__file__).resolve().parents[1]
+env_path = BASE_DIR / ".env"
 load_dotenv(dotenv_path=env_path)
-DATA_DIR = Path(__file__).resolve().parent.parent / "data"
+DATA_DIR = BASE_DIR / "data"
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 
 def _search_and_save(
     method: Callable[..., Sequence[dict[str, Any]] | None],
     params: object,
-    outfile: Path,
+    output_file: Path,
 ) -> Path | None:
     try:
         data = method(params=params)
     except AmadeusAPIError as exc:
-        print(f"\nAPI Search Failed for {method.__name__}: {exc}")
+        logger.error(
+            "API search failed for %s. Details: %s",
+            method.__name__,
+            exc,
+            exc_info=True,
+        )
         return None
 
-    if not data:
-        print(f"No data returend for {method.__name__}")
+    if data is None:
+        logger.warning(
+            "API call succeeded but returned unexpected 'None' for %s", method.__name__
+        )
         return None
 
-    return save_offers_to_json(data, outfile)
+    if len(data) == 0:
+        logger.warning(
+            "Search successful but no results found for %s.", method.__name__
+        )
+        return None
+
+    logger.info("Successfully retrieved %d flight offers.", len(data))
+    return save_offers_to_json(data, output_file)
 
 
 def run_flight_offer() -> Path | None:
@@ -53,24 +70,5 @@ def run_flight_offer() -> Path | None:
     return _search_and_save(
         AmadeusAPI().search_flight_offers,
         flight_offer_params,
-        DATA_DIR / "raw_flight_offer7.json",
+        DATA_DIR / "raw_flight_offer9.json",  # make dynamic
     )
-
-
-# Problematic API
-def run_flight_search() -> Path | None:
-    flight_data_params = FlightDateParam(ORIGIN, DESTINATION)
-    return _search_and_save(
-        AmadeusAPI().search_flight_date,
-        flight_data_params,
-        DATA_DIR / "raw_flight_date1.json",
-    )
-
-
-def main():
-    print(f"--- Starting Poor Man's Flight Searcher (v{__version__}) ---")
-    run_flight_offer()
-
-
-if __name__ == "__main__":
-    main()

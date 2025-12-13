@@ -4,16 +4,19 @@ import logging
 from pathlib import Path
 
 from src.models.flight_models import BagAllowance, FlightOffer, Itinerary, Segment
-from src.utils.flight_data_printer import print_flight_offers
 from src.utils.json_handler import load_raw_json_flight_offers
 
-DATA_DIR = Path(__file__).resolve().parents[2] / "data"
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 
-def extract_flight_offers(filepath: Path) -> list[FlightOffer] | None:
-    raw_data = load_raw_json_flight_offers(filepath)
+def extract_flight_offers(file_path: Path) -> list[FlightOffer] | None:
+    raw_data = load_raw_json_flight_offers(file_path)
     if not raw_data:
+        logger.error("Raw data at %s is invalid", file_path)
         return
+
+    logger.info("Successfully loaded raw data ---> Proceeding to process data.")
 
     offers: list[FlightOffer] = []
     for offer in raw_data:
@@ -59,22 +62,3 @@ def extract_flight_offers(filepath: Path) -> list[FlightOffer] | None:
         )
 
     return offers
-
-
-def main() -> None:
-    logging.basicConfig(
-        level=logging.INFO,
-        format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
-    )
-
-    TEST_FILE_NAME = "raw_flight_offer7.json"
-    test_file_path = DATA_DIR / TEST_FILE_NAME
-
-    data_model = extract_flight_offers(test_file_path)
-    if not data_model:
-        return
-    print_flight_offers(data_model)
-
-
-if __name__ == "__main__":
-    main()
