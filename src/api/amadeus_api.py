@@ -9,10 +9,10 @@ from typing import Any
 from amadeus import Client, ResponseError
 
 from src.exceptions.amadeus_exception_handler import AmadeusAPIError
-from src.models.amadeus_api_models import FlightDateParam, FlightOffersParam
+from src.models.amadeus_api_models import FlightOffersParam
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
 
 
 class AmadeusAPI:
@@ -21,12 +21,15 @@ class AmadeusAPI:
         secret = os.environ.get("AMADEUS_API_SECRET")
 
         if not (key and secret):
+            logger.error(
+                "Amadeus API keys not loaded. Set them in environment variables."
+            )
             raise ValueError("Amadeus API keys not loaded")
 
+        logger.info("Amadeus API Client initialized (keys loaded).")
         self.amadeus = Client(
             client_id=key,
             client_secret=secret,
-            # log_level="debug",
         )
 
     def _execute_api_call(
@@ -44,8 +47,8 @@ class AmadeusAPI:
         except ResponseError as exc:
             response = exc.response
             status = response.status_code
-            errors = response.result.get("errors", [])
 
+            errors = response.result.get("errors", [])
             detail = (
                 errors[0].get("detail", "No additional detail")
                 if errors
@@ -57,11 +60,10 @@ class AmadeusAPI:
                 context_message,
                 status,
                 detail,
-                exc_info=True,
             )
 
             raise AmadeusAPIError(
-                message=f"{context_message} failed.",
+                message=f"{context_message} failed",
                 status_code=status,
                 detail=detail,
             ) from exc
@@ -76,16 +78,5 @@ class AmadeusAPI:
         return self._execute_api_call(
             api_method=self.amadeus.shopping.flight_offers_search.get,
             context_message="search_flight_offers",
-            **api_params,
-        )
-
-    def search_flight_date(
-        self, *, params: FlightDateParam
-    ) -> list[dict[str, Any]] | None:
-        api_params = asdict(params)
-
-        return self._execute_api_call(
-            api_method=self.amadeus.shopping.flight_dates.get,
-            context_message="search_flight_dates",
             **api_params,
         )
