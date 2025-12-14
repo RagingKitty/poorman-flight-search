@@ -23,7 +23,7 @@ def setup_logging(config_path=CONFIG_FILE_PATH) -> None:
             logging.config.dictConfig(config)
     except FileNotFoundError:
         print(
-            f"ERROR: Logging config file not found at {config_path}, using basic config."
+            f"ERROR: Logging config file not found at {config_path}, use basic config."
         )
         logging.basicConfig(level=logging.INFO)
     except Exception as exc:
@@ -32,7 +32,7 @@ def setup_logging(config_path=CONFIG_FILE_PATH) -> None:
 
 
 def main():
-    is_date_valid("2027-01-01")  # Just testing
+    is_date_valid("2027-01-00")  # Just testing
 
     flight_file_path = run_flight_offer()
     if not flight_file_path:

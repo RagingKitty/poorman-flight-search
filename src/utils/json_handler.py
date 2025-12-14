@@ -20,7 +20,7 @@ def load_raw_json_flight_offers(file_path: Path) -> list[dict[str, Any]]:
             data = json.load(file)
             return data if isinstance(data, list) else []
     except json.JSONDecodeError:
-        logger.error("Failed to decode JSON from %s", file_path, exc_info=True)
+        logger.exception("Failed to deecode JSON from %s", file_path)
         return []
 
 
@@ -31,8 +31,8 @@ def save_offers_to_json(data: Sequence[dict[str, Any]], file_path: Path) -> Path
         with file_path.open("w", encoding="utf-8") as fp:
             json.dump(data, fp, indent=4, ensure_ascii=False)
         logger.info("Saved %d records -> %s", len(data), file_path)
-    except Exception as exc:
-        logger.error("Error saving data to json: %s", exc, exc_info=True)
+    except Exception:
+        logger.exception("Error saving data to json")
         return None
 
     return file_path

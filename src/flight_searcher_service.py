@@ -37,12 +37,10 @@ def _search_and_save(
 ) -> Path | None:
     try:
         data = method(params=params)
-    except AmadeusAPIError as exc:
-        logger.error(
-            "API search failed for %s. Details: %s",
+    except AmadeusAPIError:
+        logger.exception(
+            "API search failed for %s.",
             method.__name__,
-            exc,
-            exc_info=True,
         )
         return None
 
